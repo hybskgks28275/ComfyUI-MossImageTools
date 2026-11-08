@@ -22,15 +22,12 @@ MOSS-Image向けの汎用ツールパッケージです。最初のノードと�
 
 最新のComfyUIとフロントエンドを推奨します。V3 APIと `io.Array`、`io.BoundingBox` が必要です。追加のpip/npmインストールやビルドは不要です。numpy・torch・PillowはComfyUI環境のものを使用します。
 
-開発フォルダをそのまま使う場合、ComfyUIを終了して、PowerShellで以下を実行します。
+Gitをインストールし、ComfyUIのインストール先フォルダでターミナルを開いて、以下を実行します。
 
-```powershell
-New-Item -ItemType Junction `
-  -Path 'D:\tools\ComfyUI\ComfyUI\custom_nodes\ComfyUI-MossImageTools' `
-  -Target 'D:\tools\dev\ComfyUI-MossImageTools'
+```sh
+cd custom_nodes
+git clone https://github.com/hybskgks28275/ComfyUI-MossImageTools.git
 ```
-
-すでに同名のフォルダが存在する場合は上書きせず、内容を確認してください。通常の導入では、このパッケージのフォルダ全体を `ComfyUI/custom_nodes/` にコピーする方法でも使えます。
 
 ComfyUIを再起動し、ブラウザを再読み込みしてください。ノード検索で **Create Bounding Boxes (MossImage)** を選択します。カテゴリは `MossImage/layout` です。
 

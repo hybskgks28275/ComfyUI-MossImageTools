@@ -1,6 +1,6 @@
 # ComfyUI-MossImageTools
 
-English | [日本語](README_ja.md)
+English | [Japanese](README_ja.md)
 
 A general-purpose toolkit for MOSS-Image in ComfyUI. Its first node, **Create Bounding Boxes (MossImage)**, provides a visual editor for spatial layouts.
 
@@ -23,17 +23,12 @@ A general-purpose toolkit for MOSS-Image in ComfyUI. Its first node, **Create Bo
 
 Use a recent ComfyUI and frontend version with the V3 API, `io.Array`, and `io.BoundingBox`. No additional pip/npm installation or build step is required. The node uses NumPy, PyTorch, and Pillow from your ComfyUI environment.
 
-For a standard installation, copy this repository's folder into `ComfyUI/custom_nodes/`.
+With Git installed, open a terminal in your ComfyUI installation directory and run:
 
-To use a separate development folder on Windows, close ComfyUI and create a junction. Adjust these example paths to your installation:
-
-```powershell
-New-Item -ItemType Junction `
-  -Path 'D:\tools\ComfyUI\ComfyUI\custom_nodes\ComfyUI-MossImageTools' `
-  -Target 'D:\tools\dev\ComfyUI-MossImageTools'
+```sh
+cd custom_nodes
+git clone https://github.com/hybskgks28275/ComfyUI-MossImageTools.git
 ```
-
-If the destination already exists, inspect it before making changes.
 
 Restart ComfyUI and reload your browser. Search for **Create Bounding Boxes (MossImage)** in the `MossImage/layout` category.
 
@@ -43,10 +38,8 @@ Restart ComfyUI and reload your browser. Search for **Create Bounding Boxes (Mos
 
 Choose English or Japanese in **Settings → Comfy → Locale → Language**. The node title, input/output labels, editor controls, tooltips, and editor validation messages follow that setting. Existing editors switch when the setting changes. Other languages use the English editor UI. Descriptions, image text, palettes, coordinates, and undo history retain their contents.
 
-The instructions below include the Japanese labels alongside their English meanings.
-
 1. Set `width` and `height` to the intended image dimensions.
-2. Click **＋ 描画** (Draw) and drag on the canvas to create a region. The editor returns to selection mode after each drawing operation.
+2. Click **+ Draw** and drag on the canvas to create a region. The editor returns to selection mode after each drawing operation.
 3. Select a region from the list to edit its coordinates, dimensions, type, description, image text, and color. Numeric fields are committed when confirmed or when focus leaves the field. Text and valid color edits are saved as you type.
 4. Drag a selected region to move it, or drag its white corner handles to resize it.
 5. Use the region list or Alt-click to select overlapping regions.
@@ -57,17 +50,17 @@ For other upstream nodes, or values that are only known during execution, the ed
 
 Region descriptions appear directly below the size label at the top left of each region. They update while typing, preserve line breaks, wrap to the region width, and are clipped to the region height.
 
-Delete or Backspace removes the selected region. Inside a text, numeric, or HEX field, these keys retain their normal text-editing behavior. Use **元に戻す** (Undo) to restore a deleted region. **複製** (Duplicate) offsets the copy's position and shifts its hue to distinguish it from the original.
+Delete or Backspace removes the selected region. Inside a text, numeric, or HEX field, these keys retain their normal text-editing behavior. Use **Undo** to restore a deleted region. **Duplicate** offsets the copy's position and shifts its hue to distinguish it from the original.
 
 Within the region editor, Ctrl+Z undoes region edits; Ctrl+Y or Ctrl+Shift+Z redoes them. Text fields retain native text undo. ComfyUI manages the canvas DOM so that it remains available when graph undo/redo restores a node.
 
-Regions at the top of the list are in front. **前へ** (Forward) and **後ろへ** (Backward) move a region one step. Region numbers match the output element order and change when reordered. If you use these numbers in the standard MOSS node's `character_boxes`, check them after reordering.
+Regions at the top of the list are in front. **Forward** and **Backward** move a region one step. Region numbers match the output element order and change when reordered. If you use these numbers in the standard MOSS node's `character_boxes`, check them after reordering.
 
 One persistent color picker edits the selected region's color, with an optional HEX field. There are no swatches or color add/remove controls. Controls retain their positions when no region is selected or when changing region type. Existing palettes with multiple colors are preserved; only the first color is edited.
 
-New regions start with no explicit color, matching the standard node. **色指定** (Specify color) is unchecked, and the HEX field shows **指定なし** (Unspecified). Choose a color or enable the checkbox to specify one. Disable the checkbox or clear the HEX field to remove it. An unspecified region still has an editor outline color, but its output `elements` does not include `color_palette`. Duplicating an unspecified region preserves that state and changes only its editor outline color.
+New regions start with no explicit color, matching the standard node. **Color** is unchecked, and the HEX field shows **Unspecified**. Choose a color or enable the checkbox to specify one. Disable the checkbox or clear the HEX field to remove it. An unspecified region still has an editor outline color, but its output `elements` does not include `color_palette`. Duplicating an unspecified region preserves that state and changes only its editor outline color.
 
-Use **グリッド背景** (Grid background) and **交互マス** (Alternating cells) to change the grid colors independently. These affect only the editor, not the region palettes sent to MOSS. Grid colors are saved in workflows and JSON, and support undo/redo. Existing workflows retain their saved row and column counts.
+Use **Grid background** and **Alternating cells** to change the grid colors independently. These affect only the editor, not the region palettes sent to MOSS. Grid colors are saved in workflows and JSON, and support undo/redo. Existing workflows retain their saved row and column counts.
 
 ## Connections
 
