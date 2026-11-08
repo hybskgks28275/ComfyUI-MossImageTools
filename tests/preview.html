@@ -1,0 +1,11 @@
+<!doctype html><html lang="ja"><meta charset="UTF-8"><title>MossImage Tools Editor Preview</title>
+<style>body{margin:20px;background:#0a101a}#mount{width:900px;height:800px}</style>
+<div id="mount"></div><script type="module">
+import {createEditor} from '../web/editor.js';
+const editor=createEditor({width:1024,height:768});
+editor.setValue(JSON.stringify({version:1,grid:{cols:32,rows:32,snap:true},boxes:[
+ {id:'back',x:128,y:128,width:640,height:512,type:'obj',desc:'背景の領域',palette:['#69d2ff']},
+ {id:'front',x:256,y:256,width:512,height:256,type:'text',text:'MOSS IMAGE',desc:'前面の見出し',palette:['#ffb86b']}
+]}));
+document.querySelector('#mount').append(editor.element);
+</script></html>

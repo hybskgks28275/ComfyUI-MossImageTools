@@ -1,0 +1,9 @@
+[project]
+name = "comfyui-moss-image-tools"
+version = "0.2.8"
+description = "Layout editors and tools for MOSS-Image in ComfyUI"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.comfy]
+DisplayName = "MossImage Tools"
