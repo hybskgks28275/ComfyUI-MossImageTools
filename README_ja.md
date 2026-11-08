@@ -4,6 +4,8 @@
 
 MOSS-Image向けの汎用ツールパッケージです。最初のノードとして **Create Bounding Boxes (MossImage)** を収録しています。
 
+![ComfyUI上の領域ボックス作成（MossImage）ノードと日本語の領域エディター](docs/images/bounding-box-editor-ja.png)
+
 ## 改善点
 
 - 領域のX・Y・幅・高さをピクセル単位で表示・編集。幅・高さの比率も表示。
