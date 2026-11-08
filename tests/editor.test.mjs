@@ -6,10 +6,12 @@ import {createEditor} from '../web/editor.js';
 // without a browser dependency. Visual/clipboard integration is checked in ComfyUI.
 class Element {
   constructor(tag){this.tagName=tag;this.children=[];this.style={};this.attrs={};this.listeners={};this.value='';}
+  get textContent(){return this._text??this.children.map(child=>child.textContent??'').join('');}
+  set textContent(value){this.children=[];this._text=value;}
   append(...nodes){this.children.push(...nodes);}
   prepend(...nodes){this.children.unshift(...nodes);}
   replaceChildren(...nodes){this.children=nodes;}
-  setAttribute(key,value){this.attrs[key]=String(value);}
+  setAttribute(key,value){this.attrs[key]=String(value);if(['title','placeholder'].includes(key))this[key]=String(value);}
   getAttribute(key){return this.attrs[key]??null;}
   attachShadow(){return this.shadowRoot=new Element('shadow');}
   addEventListener(type,listener){(this.listeners[type]??=[]).push(listener);}
@@ -17,11 +19,11 @@ class Element {
   matches(selector){return ['input','textarea','select'].includes(this.tagName);}
 }
 globalThis.Element=Element;
-globalThis.document={createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag)};
+globalThis.document={createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag),createTextNode:value=>Object.assign(new Element('#text'),{textContent:value})};
 function all(root){return [root,...root.children.flatMap(all),...(root.shadowRoot?all(root.shadowRoot):[])];}
-function fixture(){
+function fixture(locale='ja'){
   let saved;
-  const editor=createEditor({onChange:raw=>{saved=raw;}});
+  const editor=createEditor({locale,onChange:raw=>{saved=raw;}});
   editor.setValue(JSON.stringify({version:1,boxes:[{id:'a',x:10,y:10,width:300,height:300,type:'text',desc:'before',text:'old',palette:[]}]}));
   const find=predicate=>all(editor.element).find(predicate);
   find(e=>e.tagName==='button'&&e.className==='row').onclick();
@@ -70,4 +72,48 @@ test('copy/cut/paste stop at editor boundary and retain browser default editing'
     assert.equal(stopped,true,`${type} must not reach graph handlers`);
     assert.equal(prevented,false,`${type} must retain native text editing`);
   }
+});
+
+test('English/Japanese switching preserves content, selection, palette, grid, and undo history',()=>{
+  const f=fixture('en');
+  assert.ok(f.find(e=>e.tagName==='button'&&e.textContent==='+ Draw'));
+  input(f.find(e=>e.title==='Region description'),'日本語 and English user content');
+  input(f.find(e=>e.title==='Selected region color'),'#123456');
+  const before=f.editor.value;
+  f.editor.setLocale('ja-JP');
+  assert.equal(f.editor.value,before);
+  assert.ok(f.find(e=>e.tagName==='button'&&e.textContent==='＋ 描画'));
+  assert.equal(f.find(e=>e.title==='領域の説明').value,'日本語 and English user content');
+  assert.equal(f.find(e=>e.title==='選択領域の色').value,'#123456');
+  assert.equal(f.find(e=>e.className==='row').attrs['aria-pressed'],'true');
+  f.editor.setLocale('en');
+  f.find(e=>e.tagName==='button'&&e.textContent==='Undo').onclick();
+  assert.deepEqual(f.saved.boxes[0].palette,[]);
+  assert.equal(f.saved.boxes[0].desc,'日本語 and English user content');
+  f.find(e=>e.tagName==='button'&&e.textContent==='Redo').onclick();
+  assert.equal(f.editor.value,before);
+});
+
+test('validation messages switch language and do not modify layout data',()=>{
+  const f=fixture('en'),before=f.editor.value;
+  f.editor.setValue('{"version":2}');
+  assert.match(f.find(e=>e.role==='status').textContent,/Load error: Expected version 1/);
+  f.editor.setLocale('ja');
+  assert.match(f.find(e=>e.role==='status').textContent,/読込エラー: version 1/);
+  assert.equal(f.editor.value,before);
+});
+
+test('locale-triggered reconstruction restores editor session only for matching layout and dimensions',()=>{
+  const f=fixture('en');
+  input(f.find(e=>e.title==='Region description'),'New description');
+  const session=f.editor.getSession(),restored=createEditor({locale:'ja'});
+  restored.setValue(session.value);
+  assert.equal(restored.restoreSession(session),true);
+  const find=predicate=>all(restored.element).find(predicate);
+  assert.equal(find(e=>e.className==='row').attrs['aria-pressed'],'true');
+  find(e=>e.tagName==='button'&&e.textContent==='元に戻す').onclick();
+  assert.equal(JSON.parse(restored.value).boxes[0].desc,'before');
+  restored.setValue(session.value);
+  assert.equal(restored.restoreSession({...session,width:2048}),false);
+  assert.equal(restored.restoreSession({...session,value:'different layout'}),false);
 });

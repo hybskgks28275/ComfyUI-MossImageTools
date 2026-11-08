@@ -1,7 +1,11 @@
 import { app } from '../../scripts/app.js';
 import { api } from '../../scripts/api.js';
 import { createEditor } from './editor.js';
+import { createLocaleController } from './i18n.js';
 import { MOSS_NODE_ID,HYBS_SELECTOR_ID,syncLinkedDimensions,syncMossNodes } from './dimensions.js';
+
+let locales;
+const getLocales=()=>locales??=createLocaleController(app.ui.settings,navigator.language);
 
 app.registerExtension({
   name:'MossImageTools.LayoutEditor',
@@ -34,10 +38,11 @@ app.registerExtension({
       const width=this.widgets.find(w=>w.name==='width'),height=this.widgets.find(w=>w.name==='height');
       // The original STRING is the single persisted workflow and API input.
       state.hidden=true;state.type='hidden';state.computeSize=()=>[0,-4];
-      const editor=createEditor({width:width.value,height:height.value,onChange:raw=>{
+      const editor=createEditor({width:width.value,height:height.value,locale:getLocales().locale,onChange:raw=>{
         const graph=this.graph;graph?.beforeChange?.();state.value=raw;state.callback?.(raw);graph?.afterChange?.();this.setDirtyCanvas?.(true,true);
       }});
       editor.setValue(state.value);
+      getLocales().register(editor,this);
       const widget=this.addDOMWidget('moss_layout_editor','moss_layout_editor',editor.element,{
         serialize:false,hideOnZoom:false,getMinHeight:()=>660,getMaxHeight:()=>1000,
       });
@@ -49,7 +54,7 @@ app.registerExtension({
       return result;
     };
     const configure=nodeType.prototype.onConfigure;
-    nodeType.prototype.onConfigure=function(...args){const r=configure?.apply(this,args);const w=this.widgets.find(w=>w.name==='width'),h=this.widgets.find(w=>w.name==='height');const saved=this.widgets.find(w=>w.name==='editor_state').value;this._mossEditor?.setDimensions(Number(w.value),Number(h.value));this.widgets.find(w=>w.name==='editor_state').value=saved;this._mossEditor?.setValue(saved);queueMicrotask(()=>syncLinkedDimensions(this));return r;};
+    nodeType.prototype.onConfigure=function(...args){const r=configure?.apply(this,args);const w=this.widgets.find(w=>w.name==='width'),h=this.widgets.find(w=>w.name==='height');const saved=this.widgets.find(w=>w.name==='editor_state').value;this._mossEditor?.setDimensions(Number(w.value),Number(h.value));this.widgets.find(w=>w.name==='editor_state').value=saved;this._mossEditor?.setValue(saved);queueMicrotask(()=>{syncLinkedDimensions(this);getLocales().restore(this._mossEditor,this);});return r;};
     const connectionsChanged=nodeType.prototype.onConnectionsChange;
     nodeType.prototype.onConnectionsChange=function(...args){const result=connectionsChanged?.apply(this,args);queueMicrotask(()=>syncLinkedDimensions(this));return result;};
     const executed=nodeType.prototype.onExecuted;

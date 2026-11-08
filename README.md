@@ -15,6 +15,7 @@ A general-purpose toolkit for MOSS-Image in ComfyUI. Its first node, **Create Bo
 - Save layouts in workflows, or import and export them as JSON.
 - Descriptions, image text, region colors, and grid colors are persisted as you edit, including before switching tabs or navigating subgraphs.
 - Use Ctrl+C, Ctrl+X, and Ctrl+V for text editing inside the editor without triggering graph copy/paste.
+- English and Japanese UI, following ComfyUI's language setting.
 
 ## Installation
 
@@ -36,7 +37,11 @@ Restart ComfyUI and reload your browser. Search for **Create Bounding Boxes (Mos
 
 ## Usage
 
-The editor currently uses Japanese labels; the corresponding labels are included below.
+### Language
+
+Choose English or Japanese in **Settings → Comfy → Locale → Language**. The node title, input/output labels, editor controls, tooltips, and editor validation messages follow that setting. Existing editors switch when the setting changes. Other languages use the English editor UI. Descriptions, image text, palettes, coordinates, and undo history retain their contents.
+
+The instructions below include the Japanese labels alongside their English meanings.
 
 1. Set `width` and `height` to the intended image dimensions.
 2. Click **＋ 描画** (Draw) and drag on the canvas to create a region. The editor returns to selection mode after each drawing operation.

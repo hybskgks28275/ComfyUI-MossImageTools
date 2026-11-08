@@ -1,0 +1,19 @@
+{
+  "MossImageCreateBoundingBoxes": {
+    "display_name": "Create Bounding Boxes (MossImage)",
+    "description": "Pixel-size region editor with numbered grid and overlapping-region selection. Connect elements to MOSS-Image Layout Prompt.",
+    "inputs": {
+      "width": {"name": "width"},
+      "height": {"name": "height"},
+      "editor_state": {"name": "editor state"},
+      "background": {"name": "background"}
+    },
+    "outputs": {
+      "0": {"name": "preview"},
+      "1": {"name": "bboxes"},
+      "2": {"name": "elements"},
+      "3": {"name": "width"},
+      "4": {"name": "height"}
+    }
+  }
+}

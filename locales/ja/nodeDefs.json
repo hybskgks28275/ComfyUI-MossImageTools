@@ -1,0 +1,19 @@
+{
+  "MossImageCreateBoundingBoxes": {
+    "display_name": "領域ボックス作成 (MossImage)",
+    "description": "ピクセル単位のサイズ表示、番号付きグリッド、重なった領域の選択に対応するエディターです。elementsをMOSS-Image Layout Promptに接続します。",
+    "inputs": {
+      "width": {"name": "幅"},
+      "height": {"name": "高さ"},
+      "editor_state": {"name": "編集状態"},
+      "background": {"name": "背景画像"}
+    },
+    "outputs": {
+      "0": {"name": "プレビュー"},
+      "1": {"name": "領域ボックス"},
+      "2": {"name": "要素"},
+      "3": {"name": "幅"},
+      "4": {"name": "高さ"}
+    }
+  }
+}
