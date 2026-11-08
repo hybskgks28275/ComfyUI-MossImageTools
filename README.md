@@ -1,23 +1,28 @@
 # ComfyUI-MossImageTools
 
-MOSS-Image向けの汎用ツールパッケージです。最初のノードとして **Create Bounding Boxes (MossImage)** を収録しています。
+English | [日本語](README_ja.md)
 
-## 改善点
+A general-purpose toolkit for MOSS-Image in ComfyUI. Its first node, **Create Bounding Boxes (MossImage)**, provides a visual editor for spatial layouts.
 
-- 領域のX・Y・幅・高さをピクセル単位で表示・編集。幅・高さの比率も表示。
-- グリッドの初期値は32列×32行。市松状の背景色と交互マスの色をカラーピッカーで変更でき、暗色・グレー・明色のプリセット付き。行・列番号と1マスのサイズを表示。行数・列数は各1〜32、スナップ切替付き。
-- 重なった領域を一覧から直接選択。Alt＋クリックで同じ位置の領域を順に切替。
-- 四隅でサイズ変更、ドラッグ移動、複製、削除、前後移動、最大100状態のUndo/Redo。
-- オブジェクト／テキスト、説明、描画文字、選択領域の色を編集。
-- ワークフロー内に編集状態を保存。別途JSONの保存・読込も可能。
-- 説明・描画文字・領域色・グリッド色は入力中から保存値へ反映。タブ切替やサブグラフ移動前の入力確定操作は不要です。
-- エディター内のCtrl+C／Ctrl+X／Ctrl+Vは文字のコピー・切り取り・貼り付けに使用できます。ノード側のコピー・貼り付けへ伝播しません。
+## Features
 
-## 導入
+- View and edit each region's X, Y, width, and height in pixels, with width and height percentages.
+- A 32-column × 32-row grid by default, with checkerboard cells, row and column labels, and cell dimensions. Set each axis from 1 to 32 and toggle snapping.
+- Change the grid background and alternating cell colors with visual color pickers or dark, gray, and light presets.
+- Select overlapping regions directly from a list, or Alt-click to cycle through regions at the same position.
+- Move, resize from four corner handles, duplicate, delete, and reorder regions. Undo/redo retains up to 100 states.
+- Edit region type, description, image text, and color.
+- Save layouts in workflows, or import and export them as JSON.
+- Descriptions, image text, region colors, and grid colors are persisted as you edit, including before switching tabs or navigating subgraphs.
+- Use Ctrl+C, Ctrl+X, and Ctrl+V for text editing inside the editor without triggering graph copy/paste.
 
-最新のComfyUIとフロントエンドを推奨します。V3 APIと `io.Array`、`io.BoundingBox` が必要です。追加のpip/npmインストールやビルドは不要です。numpy・torch・PillowはComfyUI環境のものを使用します。
+## Installation
 
-開発フォルダをそのまま使う場合、ComfyUIを終了して、PowerShellで以下を実行します。
+Use a recent ComfyUI and frontend version with the V3 API, `io.Array`, and `io.BoundingBox`. No additional pip/npm installation or build step is required. The node uses NumPy, PyTorch, and Pillow from your ComfyUI environment.
+
+For a standard installation, copy this repository's folder into `ComfyUI/custom_nodes/`.
+
+To use a separate development folder on Windows, close ComfyUI and create a junction. Adjust these example paths to your installation:
 
 ```powershell
 New-Item -ItemType Junction `
@@ -25,75 +30,79 @@ New-Item -ItemType Junction `
   -Target 'D:\tools\dev\ComfyUI-MossImageTools'
 ```
 
-すでに同名のフォルダが存在する場合は上書きせず、内容を確認してください。通常の導入では、このパッケージのフォルダ全体を `ComfyUI/custom_nodes/` にコピーする方法でも使えます。
+If the destination already exists, inspect it before making changes.
 
-ComfyUIを再起動し、ブラウザを再読み込みしてください。ノード検索で **Create Bounding Boxes (MossImage)** を選択します。カテゴリは `MossImage/layout` です。
+Restart ComfyUI and reload your browser. Search for **Create Bounding Boxes (MossImage)** in the `MossImage/layout` category.
 
-## 操作
+## Usage
 
-1. ノードの `width` / `height` に生成画像のサイズを指定します。
-2. 「＋ 描画」を押し、キャンバスをドラッグして領域を作成します。1回描画すると選択モードに戻ります。
-3. 領域一覧から対象を選び、X・Y・幅・高さ、タイプ、説明、文字、色を編集します。数値・文章は変更後にフォーカスを外すと確定します。
-4. 選択領域をドラッグで移動し、四隅の白いハンドルでサイズを変更できます。
-5. 重なりを選ぶには、一覧またはAlt＋クリックを使います。
+The editor currently uses Japanese labels; the corresponding labels are included below.
 
-`width` / `height` に **HYBSのResolution Selector（HYBS_ResolutionSelector）** を接続すると、解像度の選択変更を実行なしで即時反映します。接続直後・ワークフロー読込時にも選択値から同期します。接続元のwidth・height出力を個別に読み取るため、片方だけの接続にも対応します。
+1. Set `width` and `height` to the intended image dimensions.
+2. Click **＋ 描画** (Draw) and drag on the canvas to create a region. The editor returns to selection mode after each drawing operation.
+3. Select a region from the list to edit its coordinates, dimensions, type, description, image text, and color. Numeric fields are committed when confirmed or when focus leaves the field. Text and valid color edits are saved as you type.
+4. Drag a selected region to move it, or drag its white corner handles to resize it.
+5. Use the region list or Alt-click to select overlapping regions.
 
-その他のノードや、接続元の計算結果が実行時に確定する場合は、ワークフロー実行後に実際に受け取った寸法で更新します。縮小時は既存領域をキャンバス内に収め、完全にはみ出た領域も最低1pxを維持します。
+Connecting **HYBS Resolution Selector (`HYBS_ResolutionSelector`)** to `width` and/or `height` updates the canvas immediately when the selected resolution changes, without executing the workflow. Dimensions also synchronize when connected and when loading a workflow. Each output is read independently, so connecting only one dimension is supported.
 
-領域の説明は、キャンバス内の各領域の左上にあるサイズ表示のすぐ下に表示されます。入力中に表示が更新され、改行を維持しながら領域幅で折り返します。高さに収まらない部分は領域内で切り取られます。
+For other upstream nodes, or values that are only known during execution, the editor updates to the dimensions actually received after workflow execution. When the canvas shrinks, existing regions are clipped to its bounds. Regions completely outside the new bounds retain a minimum size of 1 pixel.
 
-選択した領域はDelete／Backspaceキーでも削除できます。文字・数値・色コードの入力欄で編集中は、通常の文字削除が優先されます。削除は「元に戻す」で取り消せます。「複製」では位置を少しずらし、元と区別できるよう色相も変更します。
+Region descriptions appear directly below the size label at the top left of each region. They update while typing, preserve line breaks, wrap to the region width, and are clipped to the region height.
 
-領域エディター内ではCtrl＋Zで領域編集を取り消し、Ctrl＋YまたはCtrl＋Shift＋Zでやり直します。文字入力欄では文字編集の取り消しが優先されます。グラフ側のUndo／Redoでノードが復元された際も、キャンバスのDOMはComfyUIが管理するため表示を維持します。
+Delete or Backspace removes the selected region. Inside a text, numeric, or HEX field, these keys retain their normal text-editing behavior. Use **元に戻す** (Undo) to restore a deleted region. **複製** (Duplicate) offsets the copy's position and shifts its hue to distinguish it from the original.
 
-一覧の上ほど前面です。「前へ」「後ろへ」で1段階ずつ移動します。領域番号は出力要素の順番と同じで、並べ替えると番号も変わります。標準MOSSノードの `character_boxes` に番号を指定している場合は変更後の番号を確認してください。
+Within the region editor, Ctrl+Z undoes region edits; Ctrl+Y or Ctrl+Shift+Z redoes them. Text fields retain native text undo. ComfyUI manages the canvas DOM so that it remains available when graph undo/redo restores a node.
 
-領域の色は、選択中の領域用のカラーピッカー1つで変更します。HEXコードの入力も可能です。色見本や色の追加・削除UIはありません。未選択時も同じ位置に無効状態で表示し、領域タイプの切替時も文字入力欄のスペースを維持するため、操作ボタンやキャンバスの配置がずれません。既存の複数色データは保持し、先頭の色のみ編集します。
+Regions at the top of the list are in front. **前へ** (Forward) and **後ろへ** (Backward) move a region one step. Region numbers match the output element order and change when reordered. If you use these numbers in the standard MOSS node's `character_boxes`, check them after reordering.
 
-新しい領域は標準ノードと同じ「色指定なし」で作成します。「色指定」のチェックがオフで、色コード欄は「指定なし」と表示されます。カラーピッカーで色を選ぶかチェックをオンにすると色を指定でき、チェックを外すか色コードを空欄にすると指定を解除できます。指定なしの場合、編集用の枠色は表示しますが、MOSSへ渡すelementsにcolor_paletteは追加しません。指定なしの領域を複製しても指定なしを維持し、編集用の枠色だけをずらします。
+One persistent color picker edits the selected region's color, with an optional HEX field. There are no swatches or color add/remove controls. Controls retain their positions when no region is selected or when changing region type. Existing palettes with multiple colors are preserved; only the first color is edited.
 
-グリッド上部の「グリッド背景」「交互マス」から背景色を個別に変更できます。これらの色は編集画面の表示設定で、MOSSへ渡す領域のカラーパレットには含まれません。色設定はワークフローとJSONに保存され、Undo/Redoにも対応します。既存ワークフローの行数・列数は保持されます。
+New regions start with no explicit color, matching the standard node. **色指定** (Specify color) is unchecked, and the HEX field shows **指定なし** (Unspecified). Choose a color or enable the checkbox to specify one. Disable the checkbox or clear the HEX field to remove it. An unspecified region still has an editor outline color, but its output `elements` does not include `color_palette`. Duplicating an unspecified region preserves that state and changes only its editor outline color.
 
-## 接続
+Use **グリッド背景** (Grid background) and **交互マス** (Alternating cells) to change the grid colors independently. These affect only the editor, not the region palettes sent to MOSS. Grid colors are saved in workflows and JSON, and support undo/redo. Existing workflows retain their saved row and column counts.
 
-| 出力 | 接続先・意味 |
+## Connections
+
+| Output | Purpose / destination |
 |---|---|
-| preview / IMAGE | Preview Imageなど。背景画像と番号・サイズ付きの枠を表示 |
-| bboxes / BOUNDING_BOX | 標準のピクセル座標。1フレームのボックス配列。メタデータ付き |
-| elements / ARRAY | 標準 `MOSS-Image Layout Prompt` の `element` 入力に接続 |
-| width / INT | MOSS-Image Layout Promptや生成サイズのwidth |
-| height / INT | MOSS-Image Layout Promptや生成サイズのheight |
+| preview / IMAGE | Connect to Preview Image or similar nodes. Shows the background and region outlines with numbers and dimensions. |
+| bboxes / BOUNDING_BOX | Standard pixel coordinates: an array of boxes for one frame, including metadata. |
+| elements / ARRAY | Connect to the `element` input of the standard `MOSS-Image Layout Prompt` node. |
+| width / INT | Width for MOSS-Image Layout Prompt or image generation. |
+| height / INT | Height for MOSS-Image Layout Prompt or image generation. |
 
-標準MOSSノードの `prompt` に画像全体の説明を記入し、その出力をMOSS-Imageのテキストエンコードへ接続します。オブジェクトをキャラクターとして扱う場合は標準MOSSノードの `character_boxes` に領域番号を指定します。
+Enter an overall scene description in the standard MOSS node's `prompt` field, then connect its output to MOSS-Image text encoding. To treat an object region as a character, specify its region number in that node's `character_boxes` field.
 
-`examples/moss_layout_workflow.json` はComfyUIに読み込める接続例です。モデルは不要で、プレビューだけ実行できます。MOSSノードのprompt出力は生成用ノードへ追加接続してください。
+[`examples/moss_layout_workflow.json`](examples/moss_layout_workflow.json) is a workflow you can load into ComfyUI. It can render a preview without a model. Connect the MOSS prompt output to your generation nodes to generate an image.
 
-任意入力 `background` に画像を接続すると、実行後に編集画面にも背景が反映されます。ノード上の寸法を基準に背景を引き伸ばすため、背景と同じ縦横比の寸法を指定してください。ワークフロー再読み込み時には再実行して背景を表示してください。
+The optional `background` input accepts an image. After execution, that image also appears in the editor. It is stretched to the node's dimensions, so use dimensions with the same aspect ratio as your background. Execute again after reloading a workflow to restore the background display.
 
-## 座標と制限
+## Coordinates and limits
 
-- 編集・bboxesは左上原点のピクセル座標です。elementsは標準と同じ0〜1000の `[ymin, xmin, ymax, xmax]` です。
-- キャンバス寸法変更時はピクセル値を維持し、範囲外を切り詰めます。縮小は領域を変形させる場合があります。必要なら変更前にJSONを保存してください。
-- 領域は最大512個です。JSON読込はこのパッケージのversion 1形式（2MB以下）に対応します。標準ノードの状態JSONをそのまま読む機能はありません。
-- プレビューは長辺1536pxまでです。生成・座標の解像度には影響しません。プレビューにグリッドは焼き込みません。
-- このノードはIMAGEを生成する編集補助で、MOSSモデルによる画像生成は標準の生成ノードで行います。
+- Editor coordinates and `bboxes` use pixels with the origin at the top left. `elements` uses the standard 0–1000 coordinate range in `[ymin, xmin, ymax, xmax]` order.
+- Changing canvas dimensions preserves pixel coordinates and clips regions to the new bounds. Shrinking may change region shapes; export JSON first if you need a backup.
+- A layout supports up to 512 regions. JSON import accepts this package's version 1 format, up to 2 MB. It does not directly import the standard node's state JSON.
+- Preview images are limited to 1536 pixels on the longest side. This does not affect generation dimensions or coordinate resolution. Grid lines are not included in the output preview.
+- This node is a layout editing tool with an IMAGE preview output. Use the standard generation nodes to generate images with a MOSS model.
 
 ## V3 Schema / Nodes 2.0
 
-Pythonは `io.ComfyNode`、`define_schema()`、`io.NodeOutput`、`ComfyExtension`、`comfy_entrypoint()` で登録します。V1の `NODE_CLASS_MAPPINGS` は使用しません。
+Python registration uses `io.ComfyNode`, `define_schema()`, `io.NodeOutput`, `ComfyExtension`, and `comfy_entrypoint()`. It does not use V1 `NODE_CLASS_MAPPINGS`.
 
-UIは `addDOMWidget()` のDOMブリッジと独立したShadow DOM / SVGで構成しています。`inputEl`、`onDrawForeground`、LiteGraphのグローバルパッチには依存しません。編集状態は元のSTRINGウィジェットにのみ保存し、DOMウィジェットを二重にシリアライズしません。
+The UI uses the `addDOMWidget()` DOM bridge with an independent Shadow DOM / SVG editor. It does not depend on `inputEl`, `onDrawForeground`, or global LiteGraph patches. Editor state is stored only in the original STRING widget; the DOM widget is not serialized a second time.
 
-今後のノードは `nodes/` に追加し、ルート `__init__.py` の `get_node_list()` に登録してください。JavaScriptは `web/` 内で機能ごとに分離できます。
+To add future nodes, place them in `nodes/` and register them in `get_node_list()` in the root `__init__.py`. JavaScript features can be organized into separate modules under `web/`.
 
-参考: [公式V3移行ガイド](https://docs.comfy.org/custom-nodes/v3_migration)、[公式JS拡張ガイド](https://docs.comfy.org/custom-nodes/js/javascript_overview)
+References: [Official V3 migration guide](https://docs.comfy.org/custom-nodes/v3_migration), [official JavaScript extension guide](https://docs.comfy.org/custom-nodes/js/javascript_overview).
 
-## テスト
+## Tests
+
+Run from the repository root:
 
 ```powershell
 python -m unittest discover -s tests -v
 node --test tests/*.test.mjs
 ```
 
-`tests/preview.html` は単独のエディター確認用です。パッケージルートをローカルHTTPで配信して開いてください。
+[`tests/preview.html`](tests/preview.html) provides a standalone editor preview. Serve the repository root over a local HTTP server and open that page.
