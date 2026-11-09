@@ -23,12 +23,22 @@ A general-purpose toolkit for MOSS-Image in ComfyUI. Its first node, **Create Bo
 
 Use a recent ComfyUI and frontend version with the V3 API, `io.Array`, and `io.BoundingBox`. No additional pip/npm installation or build step is required. The node uses NumPy, PyTorch, and Pillow from your ComfyUI environment.
 
+### Option 1: Git
+
 With Git installed, open a terminal in your ComfyUI installation directory and run:
 
 ```sh
 cd custom_nodes
 git clone https://github.com/hybskgks28275/ComfyUI-MossImageTools.git
 ```
+
+### Option 2: ZIP download
+
+1. Open the [GitHub repository](https://github.com/hybskgks28275/ComfyUI-MossImageTools) and choose **Code → Download ZIP**, or use the [direct ZIP download](https://github.com/hybskgks28275/ComfyUI-MossImageTools/archive/refs/heads/main.zip).
+2. Extract the downloaded ZIP archive.
+3. Move the extracted `ComfyUI-MossImageTools-main` folder into `ComfyUI/custom_nodes/` and rename it to `ComfyUI-MossImageTools`.
+
+The node entry point should be at `ComfyUI/custom_nodes/ComfyUI-MossImageTools/__init__.py`, without an extra nested folder.
 
 Restart ComfyUI and reload your browser. Search for **Create Bounding Boxes (MossImage)** in the `MossImage/layout` category.
 
@@ -44,9 +54,9 @@ Choose English or Japanese in **Settings → Comfy → Locale → Language**. Th
 4. Drag a selected region to move it, or drag its white corner handles to resize it.
 5. Use the region list or Alt-click to select overlapping regions.
 
-Connecting **HYBS Resolution Selector (`HYBS_ResolutionSelector`)** to `width` and/or `height` updates the canvas immediately when the selected resolution changes, without executing the workflow. Dimensions also synchronize when connected and when loading a workflow. Each output is read independently, so connecting only one dimension is supported.
+Set the generation resolution directly in this node's `width` and `height` fields, or connect integer (`INT`) outputs from other nodes to those inputs. A separate resolution-selector custom node is not required. Use the same dimensions for the layout and the image-generation latent.
 
-For other upstream nodes, or values that are only known during execution, the editor updates to the dimensions actually received after workflow execution. When the canvas shrinks, existing regions are clipped to its bounds. Regions completely outside the new bounds retain a minimum size of 1 pixel.
+Direct edits to `width` and `height` update the editor immediately. For connected inputs, the editor reflects the dimensions actually received after workflow execution. When the canvas shrinks, existing regions are clipped to its bounds. Regions completely outside the new bounds retain a minimum size of 1 pixel.
 
 Region descriptions appear directly below the size label at the top left of each region. They update while typing, preserve line breaks, wrap to the region width, and are clipped to the region height.
 
