@@ -22,12 +22,22 @@ MOSS-Image向けの汎用ツールパッケージです。最初のノードと�
 
 最新のComfyUIとフロントエンドを推奨します。V3 APIと `io.Array`、`io.BoundingBox` が必要です。追加のpip/npmインストールやビルドは不要です。numpy・torch・PillowはComfyUI環境のものを使用します。
 
+### 方法1：Git
+
 Gitをインストールし、ComfyUIのインストール先フォルダでターミナルを開いて、以下を実行します。
 
 ```sh
 cd custom_nodes
 git clone https://github.com/hybskgks28275/ComfyUI-MossImageTools.git
 ```
+
+### 方法2：ZIPをダウンロードして展開
+
+1. [GitHubリポジトリ](https://github.com/hybskgks28275/ComfyUI-MossImageTools)で **Code → Download ZIP** を選ぶか、[ZIPを直接ダウンロード](https://github.com/hybskgks28275/ComfyUI-MossImageTools/archive/refs/heads/main.zip)します。
+2. ダウンロードしたZIPファイルを展開します。
+3. 展開した `ComfyUI-MossImageTools-main` フォルダを `ComfyUI/custom_nodes/` に移動し、フォルダ名を `ComfyUI-MossImageTools` に変更します。
+
+`ComfyUI/custom_nodes/ComfyUI-MossImageTools/__init__.py` が存在し、同名フォルダが余分に入れ子になっていないことを確認してください。
 
 ComfyUIを再起動し、ブラウザを再読み込みしてください。ノード検索で **Create Bounding Boxes (MossImage)** を選択します。カテゴリは `MossImage/layout` です。
 
@@ -43,9 +53,9 @@ ComfyUIを再起動し、ブラウザを再読み込みしてください。ノ�
 4. 選択領域をドラッグで移動し、四隅の白いハンドルでサイズを変更できます。
 5. 重なりを選ぶには、一覧またはAlt＋クリックを使います。
 
-`width` / `height` に **HYBSのResolution Selector（HYBS_ResolutionSelector）** を接続すると、解像度の選択変更を実行なしで即時反映します。接続直後・ワークフロー読込時にも選択値から同期します。接続元のwidth・height出力を個別に読み取るため、片方だけの接続にも対応します。
+生成解像度は、このノードの `width` / `height` に直接入力するか、他のノードの整数（`INT`）出力を接続して指定します。別の解像度選択用カスタムノードは必須ではありません。レイアウトと画像生成用の潜在画像には、同じ幅・高さを指定してください。
 
-その他のノードや、接続元の計算結果が実行時に確定する場合は、ワークフロー実行後に実際に受け取った寸法で更新します。縮小時は既存領域をキャンバス内に収め、完全にはみ出た領域も最低1pxを維持します。
+`width` / `height` を直接編集すると、エディターへ即時反映されます。入力に他のノードを接続した場合は、ワークフロー実行後に実際に受け取った寸法で更新します。縮小時は既存領域をキャンバス内に収め、完全にはみ出た領域も最低1pxを維持します。
 
 領域の説明は、キャンバス内の各領域の左上にあるサイズ表示のすぐ下に表示されます。入力中に表示が更新され、改行を維持しながら領域幅で折り返します。高さに収まらない部分は領域内で切り取られます。
 
