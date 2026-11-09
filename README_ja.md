@@ -95,21 +95,4 @@ ComfyUIを再起動し、ブラウザを再読み込みしてください。ノ�
 - プレビューは長辺1536pxまでです。生成・座標の解像度には影響しません。プレビューにグリッドは焼き込みません。
 - このノードはIMAGEを生成する編集補助で、MOSSモデルによる画像生成は標準の生成ノードで行います。
 
-## V3 Schema / Nodes 2.0
-
-Pythonは `io.ComfyNode`、`define_schema()`、`io.NodeOutput`、`ComfyExtension`、`comfy_entrypoint()` で登録します。V1の `NODE_CLASS_MAPPINGS` は使用しません。
-
-UIは `addDOMWidget()` のDOMブリッジと独立したShadow DOM / SVGで構成しています。`inputEl`、`onDrawForeground`、LiteGraphのグローバルパッチには依存しません。編集状態は元のSTRINGウィジェットにのみ保存し、DOMウィジェットを二重にシリアライズしません。
-
-今後のノードは `nodes/` に追加し、ルート `__init__.py` の `get_node_list()` に登録してください。JavaScriptは `web/` 内で機能ごとに分離できます。
-
-参考: [公式V3移行ガイド](https://docs.comfy.org/custom-nodes/v3_migration)、[公式JS拡張ガイド](https://docs.comfy.org/custom-nodes/js/javascript_overview)
-
-## テスト
-
-```powershell
-python -m unittest discover -s tests -v
-node --test tests/*.test.mjs
-```
-
-`tests/preview.html` は単独のエディター確認用です。パッケージルートをローカルHTTPで配信して開いてください。
+開発方針とテスト手順は [AGENTS.md](AGENTS.md) を参照してください。
