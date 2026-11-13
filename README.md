@@ -4,6 +4,8 @@ English | [Japanese](README_ja.md)
 
 A general-purpose toolkit for MOSS-Image in ComfyUI. Its first node, **Create Bounding Boxes (MossImage)**, provides a visual editor for spatial layouts.
 
+For a standalone Windows editor that reads and writes the same layout JSON, see [MossImage Layout Editor](https://github.com/hybskgks28275/MossImage-Layout-Editor).
+
 ![Create Bounding Boxes (MossImage) node in ComfyUI, with the English region editor](docs/images/bounding-box-editor-en.png)
 
 ## Features

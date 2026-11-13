@@ -4,6 +4,8 @@
 
 MOSS-Image向けの汎用ツールパッケージです。最初のノードとして **Create Bounding Boxes (MossImage)** を収録しています。
 
+同じレイアウトJSONをComfyUIの外で読み書きするには、Windows向けの [MossImage Layout Editor](https://github.com/hybskgks28275/MossImage-Layout-Editor/blob/main/README_ja.md) を使ってください。
+
 ![ComfyUI上の領域ボックス作成（MossImage）ノードと日本語の領域エディター](docs/images/bounding-box-editor-ja.png)
 
 ## 改善点
