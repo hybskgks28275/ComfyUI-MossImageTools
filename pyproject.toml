@@ -3,7 +3,12 @@ name = "comfyui-moss-image-tools"
 version = "0.3.0"
 description = "Layout editors and tools for MOSS-Image in ComfyUI"
 requires-python = ">=3.10"
+license = { file = "LICENSE" }
 dependencies = []
 
+[project.urls]
+Repository = "https://github.com/hybskgks28275/ComfyUI-MossImageTools"
+
 [tool.comfy]
+PublisherId = "hybskgks28275"
 DisplayName = "MossImage Tools"
